@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Car Customization Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/webxr/VRButton.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="logo">
+                <h1>CarCustomizer 3D</h1>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a href="#" class="nav-link" data-page="models"><i class="fas fa-car"></i> <span>Models</span></a></li>
+                    <li><a href="#" class="nav-link" data-page="configs"><i class="fas fa-cog"></i> <span>My Configs</span></a></li>
+                    <li><a href="#" class="nav-link" data-page="community"><i class="fas fa-users"></i> <span>Community</span></a></li>
+                </ul>
+            </nav>
+            <div class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark</span>
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </header>
+        
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobile-nav">
+            <ul>
+                <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                <li><a href="#" class="nav-link" data-page="models"><i class="fas fa-car"></i> <span>Models</span></a></li>
+                <li><a href="#" class="nav-link" data-page="configs"><i class="fas fa-cog"></i> <span>My Configs</span></a></li>
+                <li><a href="#" class="nav-link" data-page="community"><i class="fas fa-users"></i> <span>Community</span></a></li>
+            </ul>
+            <div class="mobile-theme-toggle" id="mobile-theme-toggle">
+                <i class="fas fa-moon"></i>
+                <span>Dark Mode</span>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content-wrapper">
+            <!-- Home Page -->
+            <div class="page-content active" id="home-page">
+                <div class="home-content">
+                    <!-- 3D Viewport -->
+                    <div class="viewport-container">
+                        <div id="canvas-container"></div>
+                        <div class="viewport-controls">
+                            <button class="btn-viewport" id="reset-view" title="Reset View"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn-viewport" id="toggle-wireframe" title="Toggle Wireframe"><i class="fas fa-border-all"></i></button>
+                        </div>
+                        <div class="ar-vr-container">
+                            <button class="ar-vr-btn" id="toggle-ar" title="AR Mode">
+                                <i class="fas fa-cube"></i> AR
+                            </button>
+                            <button class="ar-vr-btn" id="toggle-vr" title="VR Mode">
+                                <i class="fas fa-vr-cardboard"></i> VR
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Customization Panel -->
+                    <div class="customization-panel">
+                        <div class="panel-tabs">
+                            <button class="tab-btn active" data-tab="exterior">Exterior</button>
+                            <button class="tab-btn" data-tab="interior">Interior</button>
+                            <button class="tab-btn" data-tab="accessories">Accessories</button>
+                        </div>
+                        <div class="panel-content">
+                            <!-- Exterior Tab -->
+                            <div class="tab-pane active" id="exterior">
+                                <div class="customization-section">
+                                    <h3>Paint Color</h3>
+                                    <div class="color-presets">
+                                        <div class="color-preset active" style="background-color: #e53935" data-color="#e53935"></div>
+                                        <div class="color-preset" style="background-color: #1e88e5" data-color="#1e88e5"></div>
+                                        <div class="color-preset" style="background-color: #43a047" data-color="#43a047"></div>
+                                        <div class="color-preset" style="background-color: #fb8c00" data-color="#fb8c00"></div>
+                                        <div class="color-preset" style="background-color: #8e24aa" data-color="#8e24aa"></div>
+                                        <div class="color-preset" style="background-color: #000000" data-color="#000000"></div>
+                                        <div class="color-preset" style="background-color: #ffffff" data-color="#ffffff"></div>
+                                        <div class="color-preset" style="background-color: #757575" data-color="#757575"></div>
+                                    </div>
+                                    <div class="custom-color">
+                                        <input type="color" id="color-picker" value="#e53935">
+                                    </div>
+                                </div>
+                                <div class="customization-section">
+                                    <h3>Paint Finish</h3>
+                                    <div class="finish-options">
+                                        <div class="finish-option active" data-finish="glossy">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>Glossy</span>
+                                        </div>
+                                        <div class="finish-option" data-finish="metallic">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>Metallic</span>
+                                        </div>
+                                        <div class="finish-option" data-finish="matte">
+                                            <div class="finish-preview matte"></div>
+                                            <span>Matte</span>
+                                        </div>
+                                        <!-- <div class="finish-option" data-finish="pearl">
+                                            <div class="finish-preview pearl"></div>
+                                            <span>Pearl</span>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="customization-section">
+                                    <h3>Wheels</h3>
+                                    <div class="wheel-options">
+                                        <div class="wheel-option active" data-wheel="sport">
+                                            <div class="wheel-preview sport"></div>
+                                            <span>Sport 19"</span>
+                                        </div>
+                                        <div class="wheel-option" data-wheel="luxury">
+                                            <div class="wheel-preview luxury"></div>
+                                            <span>Luxury 20"</span>
+                                        </div>
+                                        <div class="wheel-option" data-wheel="offroad">
+                                            <div class="wheel-preview offroad"></div>
+                                            <span>Off-road 18"</span>
+                                        </div>
+                                        <div class="wheel-option" data-wheel="classic">
+                                            <div class="wheel-preview classic"></div>
+                                            <span>Classic 17"</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="customization-section">
+                                    <h3>Lighting</h3>
+                                    <div class="lighting-options">
+                                        <div class="toggle-option">
+                                            <label for="headlight-led">LED Headlights</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="headlight-led" checked>
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                        <div class="toggle-option">
+                                            <label for="taillight-led">LED Taillights</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="taillight-led" checked>
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                        <div class="toggle-option">
+                                            <label for="ambient-lighting">Ambient Lighting</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="ambient-lighting">
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Interior Tab -->
+                            <div class="tab-pane" id="interior">
+                                <div class="customization-section">
+                                    <h3>Upholstery</h3>
+                                    <div class="upholstery-options">
+                                        <div class="finish-option active" data-upholstery="leather">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>Leather</span>
+                                        </div>
+                                        <div class="finish-option" data-upholstery="fabric">
+                                            <div class="finish-preview matte"></div>
+                                            <span>Fabric</span>
+                                        </div>
+                                        <div class="finish-option" data-upholstery="alcantara">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>Alcantara</span>
+                                        </div>
+                                        <div class="finish-option" data-upholstery="suede">
+                                            <div class="finish-preview pearl"></div>
+                                            <span>Suede</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="customization-section">
+                                    <h3>Interior Color</h3>
+                                    <div class="color-presets">
+                                        <div class="color-preset active" style="background-color: #212121" data-interior-color="#212121"></div>
+                                        <div class="color-preset" style="background-color: #f5f5f5" data-interior-color="#f5f5f5"></div>
+                                        <div class="color-preset" style="background-color: #8d6e63" data-interior-color="#8d6e63"></div>
+                                        <div class="color-preset" style="background-color: #37474f" data-interior-color="#37474f"></div>
+                                        <div class="color-preset" style="background-color: #b71c1c" data-interior-color="#b71c1c"></div>
+                                    </div>
+                                </div>
+                                <div class="customization-section">
+                                    <h3>Trim</h3>
+                                    <div class="trim-options">
+                                        <div class="finish-option active" data-trim="wood">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>Wood</span>
+                                        </div>
+                                        <div class="finish-option" data-trim="carbon">
+                                            <div class="finish-preview matte"></div>
+                                            <span>Carbon Fiber</span>
+                                        </div>
+                                        <div class="finish-option" data-trim="aluminum">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>Aluminum</span>
+                                        </div>
+                                        <div class="finish-option" data-trim="piano-black">
+                                            <div class="finish-preview pearl"></div>
+                                            <span>Piano Black</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Performance Tab -->
+                            <div class="tab-pane" id="performance">
+                                <div class="customization-section">
+                                    
+                                </div>
+                                
+                                <!-- New Performance Features -->
+                                <div class="customization-section">
+                                    <h3>Performance Metrics</h3>
+                                    <div class="performance-metrics">
+                                        <div class="performance-metric">
+                                            <span class="metric-label">0-60 mph:</span>
+                                            <span class="metric-value" id="acceleration">4.8s</span>
+                                        </div>
+                                        <div class="performance-metric">
+                                            <span class="metric-label">Top Speed:</span>
+                                            <span class="metric-value" id="top-speed">155 mph</span>
+                                        </div>
+                                        <div class="performance-metric">
+                                            <span class="metric-label">Horsepower:</span>
+                                            <span class="metric-value" id="horsepower">255 HP</span>
+                                        </div>
+                                        <div class="performance-metric">
+                                            <span class="metric-label">Torque:</span>
+                                            <span class="metric-value" id="torque">295 lb-ft</span>
+                                        </div>
+                                    </div>
+                                    <div class="performance-chart">
+                                        <div class="chart-bar" style="left: 5%; height: 60%;"></div>
+                                        <div class="chart-bar" style="left: 20%; height: 75%;"></div>
+                                        <div class="chart-bar" style="left: 35%; height: 85%;"></div>
+                                        <div class="chart-bar" style="left: 50%; height: 70%;"></div>
+                                        <div class="chart-bar" style="left: 65%; height: 90%;"></div>
+                                        <div class="chart-bar" style="left: 80%; height: 65%;"></div>
+                                        
+                                        <div class="chart-label" style="left: 5%;">Torque</div>
+                                        <div class="chart-label" style="left: 20%;">Power</div>
+                                        <div class="chart-label" style="left: 35%;">Handling</div>
+                                        <div class="chart-label" style="left: 50%;">Braking</div>
+                                        <div class="chart-label" style="left: 65%;">Efficiency</div>
+                                        <div class="chart-label" style="left: 80%;">Overall</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customization-section">
+                                    <h3>Drive Mode</h3>
+                                    <div class="drive-mode-selector">
+                                        <div class="drive-mode-btn active" data-mode="comfort">Comfort</div>
+                                        <div class="drive-mode-btn" data-mode="sport">Sport</div>
+                                        <div class="drive-mode-btn" data-mode="eco">Eco</div>
+                                        <div class="drive-mode-btn" data-mode="track">Track</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customization-section">
+                                    <h3>Exhaust System</h3>
+                                    <div class="exhaust-options">
+                                        <div class="finish-option active" data-exhaust="standard">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>Standard</span>
+                                        </div>
+                                        <div class="finish-option" data-exhaust="sport">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>Sport</span>
+                                        </div>
+                                        <div class="finish-option" data-exhaust="performance">
+                                            <div class="finish-preview matte"></div>
+                                            <span>Performance</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customization-section">
+                                    <h3>Suspension</h3>
+                                    <div class="suspension-options">
+                                        <div class="finish-option active" data-suspension="comfort">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>Comfort</span>
+                                        </div>
+                                        <div class="finish-option" data-suspension="sport">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>Sport</span>
+                                        </div>
+                                        <div class="finish-option" data-suspension="adaptive">
+                                            <div class="finish-preview matte"></div>
+                                            <span>Adaptive</span>
+                                        </div>
+                                        <div class="finish-option" data-suspension="track">
+                                            <div class="finish-preview pearl"></div>
+                                            <span>Track</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customization-section">
+                                    <h3>Transmission</h3>
+                                    <div class="transmission-options">
+                                        <div class="finish-option active" data-transmission="manual">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>6-Speed Manual</span>
+                                        </div>
+                                        <div class="finish-option" data-transmission="automatic">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>8-Speed Automatic</span>
+                                        </div>
+                                        <div class="finish-option" data-transmission="dual-clutch">
+                                            <div class="finish-preview matte"></div>
+                                            <span>7-Speed DCT</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="customization-section">
+                                    <h3>Brakes</h3>
+                                    <div class="brakes-options">
+                                        <div class="finish-option active" data-brakes="standard">
+                                            <div class="finish-preview glossy"></div>
+                                            <span>Standard</span>
+                                        </div>
+                                        <div class="finish-option" data-brakes="sport">
+                                            <div class="finish-preview metallic"></div>
+                                            <span>Sport</span>
+                                        </div>
+                                        <div class="finish-option" data-brakes="performance">
+                                            <div class="finish-preview matte"></div>
+                                            <span>Performance</span>
+                                        </div>
+                                        <div class="finish-option" data-brakes="ceramic">
+                                            <div class="finish-preview pearl"></div>
+                                            <span>Ceramic</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Accessories Tab -->
+                            <div class="tab-pane" id="accessories">
+                                <div class="customization-section">
+                                    <h3>Exterior Accessories</h3>
+                                    <div class="accessories-grid">
+                                        <div class="toggle-option">
+                                            <label for="spoiler">Spoiler</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="spoiler">
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                        <div class="toggle-option">
+                                            <label for="roof-rack">Roof Rack</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="roof-rack">
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                        <div class="toggle-option">
+                                            <label for="side-skirts">Side Skirts</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="side-skirts">
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                        <div class="toggle-option">
+                                            <label for="front-lip">Front Lip</label>
+                                            <div class="toggle-switch">
+                                                <input type="checkbox" id="front-lip">
+                                                <span class="toggle-slider"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="panel-actions">
+                            <button class="btn-secondary" id="reset-config">Reset</button>
+                            <button class="btn-primary" id="save-config">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Models Page -->
+            <div class="page-content" id="models-page">
+                <div class="page-header">
+                    <h2>Car Models</h2>
+                    <p>Explore our range of vehicles and find the perfect one for you</p>
+                </div>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <!-- <img src="https://images.unsplash.com/photo-1553429069-ad8533484368?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sports Car" class="card-img"> -->
+                        <div class="card-content">
+                            <h3>Sports Car</h3>
+                            <p>High-performance vehicle designed for speed and handling</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">From $45,000</div>
+                            <button class="btn-primary btn-small customize-btn" data-model="sports">Customize</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <!-- <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="SUV" class="card-img"> -->
+                        <div class="card-content">
+                            <h3>SUV</h3>
+                            <p>Spacious and versatile for family adventures</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">From $35,000</div>
+                            <button class="btn-primary btn-small customize-btn" data-model="suv">Customize</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <!-- <img src="https://images.unsplash.com/photo-1554224712-d8560f709cbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sedan" class="card-img"> -->
+                        <div class="card-content">
+                            <h3>Sedan</h3>
+                            <p>Comfortable and efficient for daily commuting</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">From $25,000</div>
+                            <button class="btn-primary btn-small customize-btn" data-model="sedan">Customize</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <!-- <img src="https://images.unsplash.com/photo-1609521263047-f3f3aabb388c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Convertible" class="card-img"> -->
+                        <div class="card-content">
+                            <h3>Convertible</h3>
+                            <p>Open-top driving experience with style</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">From $55,000</div>
+                            <button class="btn-primary btn-small customize-btn" data-model="convertible">Customize</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <!-- <img src="https://images.unsplash.com/photo-1619452821096-0dc0b4a2d8d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Electric Car" class="card-img"> -->
+                        <div class="card-content">
+                            <h3>Electric</h3>
+                            <p>Eco-friendly with cutting-edge technology</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">From $40,000</div>
+                            <button class="btn-primary btn-small customize-btn" data-model="electric">Customize</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <!-- <img src="https://images.unsplash.com/photo-1580273916550-e360bd517d28?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Luxury Car" class="card-img"> -->
+                        <div class="card-content">
+                            <h3>Luxury</h3>
+                            <p>Premium comfort and advanced features</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="price">From $75,000</div>
+                            <button class="btn-primary btn-small customize-btn" data-model="luxury">Customize</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- My Configs Page -->
+            <div class="page-content" id="configs-page">
+                <div class="page-header">
+                    <h2>My Configurations</h2>
+                    <p>Manage and share your custom car designs</p>
+                </div>
+                
+                <div id="configs-container">
+                    <!-- Configurations will be dynamically loaded here -->
+                </div>
+                
+                <div class="empty-state visible" id="empty-configs">
+                    <i class="fas fa-car"></i>
+                    <h3>No saved configurations</h3>
+                    <p>Create and save your first car configuration</p>
+                    <button class="btn-primary" id="create-new-config">Create New</button>
+                </div>
+            </div>
+            
+            <!-- Community Page -->
+            <div class="page-content" id="community-page">
+                <div class="page-header">
+                    <h2>Community</h2>
+                    <p>Share your designs and get inspired by others</p>
+                </div>
+                
+                <div id="community-posts-container">
+                    <!-- Community posts will be dynamically loaded here -->
+                </div>
+            </div>
+            
+            <!-- Dealers Page -->
+            
+        </div>
+    </div>
+    
+    <!-- Save Configuration Modal -->
+    <div class="modal" id="save-config-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Save Configuration</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="config-name">Configuration Name</label>
+                <input type="text" id="config-name" placeholder="My Custom Car">
+            </div>
+            <div class="form-group">
+                <label for="config-description">Description (Optional)</label>
+                <textarea id="config-description" rows="3" placeholder="Describe your custom car configuration..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancel-save">Cancel</button>
+                <button class="btn-primary" id="confirm-save">Save</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification"></div>
+    <script src="script.js"></script>
+    
+</body>
+</html>
