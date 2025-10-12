@@ -5,7 +5,7 @@
 
 This is widely used in:
 
-🚗 Car customizers (rotate, change colors, preview)
+🚗 Car customizes (rotate, change colors, preview)
 
 🏢 Architecture walkthroughs
 
